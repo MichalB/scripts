@@ -12,7 +12,9 @@ wget "http://www.us.apache.org/dist/kafka/${kafka_version}/${file_name}"
 tar xvzf "${file_name}" --strip 1
 rm -f "${file_name}"
 useradd kafka
-chown -hR kafka. /opt/kafka
+
+cp ./../init.d/kafka /etc/init.d
+chmod +x /etc/init.d/kafka
 
 echo ""
 echo "Update server config:"
@@ -25,4 +27,4 @@ echo "Update config for cluster"
 echo "key: broker.id"
 echo ""
 echo "Start Kafka broker"
-echo "sudo -u kafka /opt/kafka/bin/kafka-server-start.sh -daemon /opt/kafka/config/server.properties"
+echo "sudo service kafka start"

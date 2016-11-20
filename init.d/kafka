@@ -21,14 +21,13 @@ LOGFILE="$LOGDIR/$NAME.log"
 function start {
   if [[ ! -e $LOGDIR ]]; then
     mkdir $LOGDIR
-    chown -hR kafka. $LOGDIR
   fi
   echo "Starting $NAME ..."
   if [ -f "$PIDFILE" ]; then
     echo "Already running according to $PIDFILE"
     exit 1
   else
-    /bin/su -s /bin/sh -u $USER -m -c "$STARTCMD" > $LOGFILE 2>&1 &
+    /bin/su -s /bin/sh -l $USER -c "$STARTCMD" > $LOGFILE 2>&1 &
     PID=$!
     echo $PID > $PIDFILE
     echo "Started $NAME with pid $PID - Logging to $LOGFILE"
@@ -41,7 +40,7 @@ function stop {
     echo "Already stopped!"
   else
     PID=`cat $PIDFILE`
-    /bin/su -s /bin/sh -u $USER -m -c "$STOPCMD"
+    /bin/su -s /bin/sh -l $USER -c "$STOPCMD"
     while ps -p $PID > /dev/null; do sleep 1; done
     rm -f $PIDFILE
     echo "Stopped $NAME"
