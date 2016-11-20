@@ -15,14 +15,14 @@ fi
 
 echo "Changing hostname from $OLD_HOSTNAME to $NEW_HOSTNAME..."
 
-sudo hostname "$NEW_HOSTNAME"
+hostname "$NEW_HOSTNAME"
 
-sudo sed -i "s/HOSTNAME=.*/HOSTNAME=$NEW_HOSTNAME/g" /etc/sysconfig/network
+sed -i "s/HOSTNAME=.*/HOSTNAME=$NEW_HOSTNAME/g" /etc/sysconfig/network
 
 if [ -n "$( grep "$OLD_HOSTNAME" /etc/hosts )" ]; then
- sudo sed -i "s/$OLD_HOSTNAME/$NEW_HOSTNAME/g" /etc/hosts
+ sed -i "s/$OLD_HOSTNAME/$NEW_HOSTNAME/g" /etc/hosts
 else
- sudo echo -e "$( hostname -I | awk '{ print $1 }' )\t$NEW_HOSTNAME" >> /etc/hosts
+ echo -e "$( hostname -I | awk '{ print $1 }' )\t$NEW_HOSTNAME" >> /etc/hosts
 fi
 
 echo "Done."

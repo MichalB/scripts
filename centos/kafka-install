@@ -16,7 +16,7 @@ chown -hR kafka.  /opt/kafka
 
 echo ""
 echo "Update server config:"
-echo "vim /opt/kafka/config/server.properties"
+echo "sudo vim /opt/kafka/config/server.properties"
 echo ""
 echo "Zookeeper connection"
 echo "key: zookeeper.connect"

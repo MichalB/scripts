@@ -13,5 +13,5 @@ java_version_with_build="${java_version}-${java_build}"
 
 wget --no-cookies --header "Cookie: gpw_e24=xxx; oraclelicense=accept-securebackup-cookie;" "http://download.oracle.com/otn-pub/java/jdk/${java_version_with_build}/jdk-${java_version}-linux-x64.rpm"
 
-sudo rpm -i jdk-${java_version}-linux-x64.rpm
+rpm -i jdk-${java_version}-linux-x64.rpm
 rm -f jdk-${java_version}-linux-x64.rpm
