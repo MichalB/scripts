@@ -7,27 +7,26 @@ kafka_version="0.10.1.0"
 file_name="kafka_${scala_version}-${kafka_version}.tgz"
 
 mkdir /opt/kafka
-cd /opt/kafka
 wget "http://www.us.apache.org/dist/kafka/${kafka_version}/${file_name}"
-tar xvzf "${file_name}" --strip 1
+tar xvzf "${file_name}" --strip 1 -C /opt/kafka
 rm -f "${file_name}"
 useradd kafka
 chown -hR kafka. /opt/kafka
 
 parent_dir=$(dirname ${BASH_SOURCE[0]})
-cd $parent_dir
-cp ../init.d/kafka /etc/init.d
+cp $parent_dir/../init.d/kafka /etc/init.d
 chmod +x /etc/init.d/kafka
 
 echo ""
 echo "Update server config:"
 echo "sudo vim /opt/kafka/config/server.properties"
 echo ""
-echo "Zookeeper connection"
+echo "Zookeeper connection:"
 echo "key: zookeeper.connect"
 echo ""
-echo "Update config for cluster"
+echo "Update config for cluster:"
 echo "key: broker.id"
 echo ""
-echo "Start Kafka broker"
+echo "Start Kafka broker:"
 echo "sudo service kafka start"
+echo ""
