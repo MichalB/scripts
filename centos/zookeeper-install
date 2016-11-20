@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# Install Zookeeper from Cloudera
+# https://open.mesosphere.com/advanced-course/installing-zookeeper/
+
+sudo rpm -Uvh http://archive.cloudera.com/cdh4/one-click-install/redhat/6/x86_64/cloudera-cdh-4-0.x86_64.rpm
+sudo yum update
+sudo yum -y install zookeeper zookeeper-server
+
+echo ""
+echo "Initialize Zookeeper:"
+echo "sudo -u zookeeper zookeeper-server-initialize --myid=1"
+echo ""
+echo "Update config for cluster:"
+echo "sudo vim /etc/zookeeper/conf/zoo.cfg"
+echo ""
+echo "Add to config:"
+echo "server.1={hostname}:2888:3888"
+echo "server.2={hostname}:2888:3888"
+echo "server.3={hostname}:2888:3888"
+echo ""
+echo "Start Zookeeper:"
+echo "sudo service zookeeper-server start"
+echo ""
+echo "Set zookeeper to start up automaticall:"
+echo "sudo chkconfig zookeeper-server on"

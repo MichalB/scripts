@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Install Kafka
+
+scala_version="2.11"
+kafka_version="0.10.1.0"
+file_name="kafka_${scala_version}-${kafka_version}.tgz"
+
+mkdir ~/kafka
+cd ~/kafka
+wget "http://www.us.apache.org/dist/kafka/${kafka_version}/${file_name}"
+tar xvzf "${file_name}" --strip 1
+rm -f "${file_name}"
+
+echo ""
+echo "Update server config:"
+echo "vim ~/kafka/config/server.properties"
+echo ""
+echo "Zookeeper connection"
+echo "key: zookeeper.connect"
+echo ""
+echo "Update config for cluster"
+echo "key: broker.id"
