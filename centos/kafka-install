@@ -12,7 +12,7 @@ wget "http://www.us.apache.org/dist/kafka/${kafka_version}/${file_name}"
 tar xvzf "${file_name}" --strip 1
 rm -f "${file_name}"
 useradd kafka
-chown -hR kafka.  /opt/kafka
+chown -hR kafka. /opt/kafka
 
 echo ""
 echo "Update server config:"

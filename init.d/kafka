@@ -10,29 +10,25 @@
 ### END INIT INFO
 
 NAME="kafka"
+USER="kafka"
 
 STARTCMD="/opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties"
 STOPCMD="/opt/kafka/bin/kafka-server-stop.sh"
 PIDFILE="/var/run/$NAME.pid"
-LOGFILE="/var/log/$NAME.log"
-
-recursiveKill() { # Recursively kill a process and all subprocesses
-  CPIDS=$(pgrep -P $1);
-  for PID in $CPIDS
-  do
-    recursiveKill $PID
-  done
-  sleep 3 && kill -9 $1 2>/dev/null & # hard kill after 3 seconds
-  kill $1 2>/dev/null # try soft kill first
-}
+LOGDIR="/var/log/$NAME"
+LOGFILE="$LOGDIR/$NAME.log"
 
 function start {
+  if [[ ! -e $LOGDIR ]]; then
+    mkdir $LOGDIR
+    chown -hR kafka. $LOGDIR
+  fi
   echo "Starting $NAME ..."
   if [ -f "$PIDFILE" ]; then
     echo "Already running according to $PIDFILE"
     exit 1
   else
-    /bin/su -m -c "$STARTCMD" > $LOGFILE 2>&1 &
+    /bin/su -s /bin/sh -u $USER -m -c "$STARTCMD" > $LOGFILE 2>&1 &
     PID=$!
     echo $PID > $PIDFILE
     echo "Started $NAME with pid $PID - Logging to $LOGFILE"
@@ -44,9 +40,9 @@ function stop {
   if [ ! -f $PIDFILE ]; then
     echo "Already stopped!"
   else
-    # PID=`cat $PIDFILE`
-    # recursiveKill $PID
-    /bin/su -m -c "$STOPCMD"
+    PID=`cat $PIDFILE`
+    /bin/su -s /bin/sh -u $USER -m -c "$STOPCMD"
+    while ps -p $PID > /dev/null; do sleep 1; done
     rm -f $PIDFILE
     echo "Stopped $NAME"
   fi
