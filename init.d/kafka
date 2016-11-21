@@ -12,51 +12,58 @@
 NAME="kafka"
 USER="kafka"
 
-STARTCMD="/opt/kafka/bin/kafka-server-start.sh /opt/kafka/config/server.properties"
-STOPCMD="/opt/kafka/bin/kafka-server-stop.sh"
-PIDFILE="/var/run/$NAME.pid"
-LOGDIR="/var/log/$NAME"
-LOGFILE="$LOGDIR/$NAME.log"
+LOG_DIR="/var/log/$NAME"
+
+SERVER_PROPERTIES="/opt/kafka/config/server.properties"
+KAFKA_LOG_DIR=$(cat ${SERVER_PROPERTIES} | grep '^log.dirs' | cut -f2 -d= | cut -f1 -d,)
+LOCK_FILE="${KAFKA_LOG_DIR}/.lock"
+
+START_CMD="LOG_DIR=${LOG_DIR} /opt/kafka/bin/kafka-server-start.sh -daemon ${SERVER_PROPERTIES}"
+STOP_CMD="/opt/kafka/bin/kafka-server-stop.sh"
 
 function start {
-  if [[ ! -e $LOGDIR ]]; then
-    mkdir $LOGDIR
+  echo "Using config: ${SERVER_PROPERTIES}"
+  echo "Logging to: ${LOG_DIR}"
+  printf "Starting $NAME ... "
+
+  if [[ ! -e $LOG_DIR ]]; then
+    mkdir $LOG_DIR
+    chown -hR kafka. $LOG_DIR
   fi
-  echo "Starting $NAME ..."
-  if [ -f "$PIDFILE" ]; then
-    echo "Already running according to $PIDFILE"
+  PIDS=$(ps ax | grep -i 'kafka\.Kafka' | grep java | grep -v grep | awk '{print $1}')
+  if [ -n "$PIDS" ]; then
+    echo "already running as process $PIDS"
     exit 1
   else
-    /bin/su -s /bin/sh -l $USER -c "$STARTCMD" > $LOGFILE 2>&1 &
-    PID=$!
-    echo $PID > $PIDFILE
-    echo "Started $NAME with pid $PID - Logging to $LOGFILE"
+    /bin/su -s /bin/sh -l $USER -c "$START_CMD" &
+    echo "STARTED"
   fi
 }
 
 function stop {
-  echo "Stopping $NAME ..."
-  if [ ! -f $PIDFILE ]; then
-    echo "Already stopped!"
+  printf "Stopping $NAME ... "
+
+  # copy from /opt/kafka/bin/kafka-server-stop.sh
+  PIDS=$(ps ax | grep -i 'kafka\.Kafka' | grep java | grep -v grep | awk '{print $1}')
+  if [ -z "$PIDS" ]; then
+    echo "no kafka server to stop"
+    exit 1
   else
-    PID=`cat $PIDFILE`
-    /bin/su -s /bin/sh -l $USER -c "$STOPCMD"
-    while ps -p $PID > /dev/null; do sleep 1; done
-    rm -f $PIDFILE
-    echo "Stopped $NAME"
+    /bin/su -s /bin/sh -l $USER -c "$STOP_CMD" &
+    while ps -p $PIDS > /dev/null; do sleep 1; done
+    rm -f $LOCK_FILE
+    echo "STOPPED"
   fi
 }
 
 function status {
-  if [ -f "$PIDFILE" ]; then
-    PID=`cat $PIDFILE`
-    if [ "$(/bin/ps --no-headers -p $PID)" ]; then
-      echo "$NAME is running (pid : $PID)"
-    else
-      echo "Pid $PID found in $PIDFILE, but not running."
-    fi
+  PIDS=$(ps ax | grep -i 'kafka\.Kafka' | grep java | grep -v grep | awk '{print $1}')
+  if [ -n "$PIDS" ]; then
+    echo "$NAME is running"
+  elif [ -f "$LOCK_FILE" ]; then
+    echo "$NAME is not running, but lock file found in $LOCK_FILE"
   else
-    echo "$NAME is NOT running"
+    echo "$NAME is not running"
   fi
 }
 
