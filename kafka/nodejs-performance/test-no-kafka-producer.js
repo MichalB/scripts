@@ -1,5 +1,5 @@
 // Setup
-// bin/kafka-topics.sh --zookeeper zk01.eu-w1.aws.vpn:2181 --create --topic test-rep-one --partitions 6 --replication-factor 1
+// bin/kafka-topics.sh --zookeeper zk01.eu-w1.aws.vpn:2181 --create --topic test --partitions 6 --replication-factor 1
 
 var util = require('util');
 var Kafka = require('no-kafka');
@@ -19,13 +19,14 @@ MyPartitioner.prototype.getKey = function getKey(message) {
 };
 
 var producer = new Producer({
+    connectionString: 'kafka01.eu-w1.aws.vpn:9092,kafka02.eu-w1.aws.vpn:9092',
     partitioner: new MyPartitioner()
 });
 
 producer.init().then(function () {
     async.timesLimit(1000000, 1000, function (n, next) {
         producer.send({
-            topic: 'test-rep-one',
+            topic: 'test',
             message: {
                 key: Math.random().toString(36).substring(7),
                 value: 'Hello! #' + n

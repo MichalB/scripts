@@ -24,3 +24,17 @@ echo "sudo service zookeeper-server start"
 echo ""
 echo "Set zookeeper to start up automaticall:"
 echo "sudo chkconfig zookeeper-server on"
+
+# Appent to /etc/zookeeper/conf/log4j.properties
+: '
+log4j.rootLogger=${zookeeper.root.logger}, PAPERTRAIL
+
+log4j.appender.PAPERTRAIL=org.apache.log4j.net.SyslogAppender
+log4j.appender.PAPERTRAIL.Threshold=WARN
+log4j.appender.PAPERTRAIL.Facility=LOCAL7
+log4j.appender.PAPERTRAIL.FacilityPrinting=false
+log4j.appender.PAPERTRAIL.Header=true
+log4j.appender.PAPERTRAIL.SyslogHost=logs2.papertrailapp.com:52597
+log4j.appender.PAPERTRAIL.layout=org.apache.log4j.PatternLayout
+log4j.appender.PAPERTRAIL.layout.ConversionPattern=%p: (%F:%L) %x %m %n
+'
