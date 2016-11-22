@@ -1,5 +1,5 @@
 // Setup
-// bin/kafka-topics.sh --zookeeper esv4-hcl197.grid.linkedin.com:2181 --create --topic test-rep-one --partitions 6 --replication-factor 1
+// bin/kafka-topics.sh --zookeeper zk01.eu-w1.aws.vpn:2181 --create --topic test-rep-one --partitions 6 --replication-factor 1
 
 var util = require('util');
 var Kafka = require('no-kafka');
@@ -23,7 +23,7 @@ var producer = new Producer({
 });
 
 producer.init().then(function () {
-    async.timesLimit(500000, 500, function (n, next) {
+    async.timesLimit(1000000, 1000, function (n, next) {
         producer.send({
             topic: 'test-rep-one',
             message: {
@@ -33,3 +33,6 @@ producer.init().then(function () {
         }).then(function () { next() });
     }, function () { process.exit(0) })
 });
+
+// 1.000.000 messages / 63 sec per nodeJS producer on 1 CPU
+// Kafka on m4.large - 20% CPU / 10 nodeJS producers
