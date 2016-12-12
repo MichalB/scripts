@@ -1,10 +1,14 @@
+#!/usr/bin/env bash
 
 # Create a topic
-bin/kafka-topics.sh --zookeeper zk01.eu-w1.aws.vpn:2181 --topic test --create --replication-factor 2 --partitions 8
+/opt/kafka/bin/kafka-topics.sh --zookeeper zk01:2181 --create --topic test --replication-factor 2 --partitions 8
 
 # Info about topic
-bin/kafka-topics.sh --zookeeper zk01.eu-w1.aws.vpn:2181 --topic test --describe
+/opt/kafka/bin/kafka-topics.sh --zookeeper zk01:2181 --describe --topic test
+
+# Read topics list
+/opt/kafka/bin/kafka-topics.sh --zookeeper zk01:2181 --list
 
 # Rebalance topics after server restart
 # https://blog.imaginea.com/how-to-rebalance-topics-in-kafka-cluster/
-bin/kafka-preferred-replica-election.sh --zookeeper zk01.eu-w1.aws.vpn:2181
+/opt/kafka/bin/kafka-preferred-replica-election.sh --zookeeper zk01:2181

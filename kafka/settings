@@ -1,0 +1,7 @@
+# http://www.slideshare.net/DavidMoravek/kafka-58744475
+
+unclean.leader.election.enable=false
+min.insync.replicas=2
+default.replication.factor=3
+
+# ... which means three servers in the cluster

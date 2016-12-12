@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Install last JDK
 # https://gist.github.com/rtfpessoa/17752cbf7156bdf32c59

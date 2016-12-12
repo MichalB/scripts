@@ -4,7 +4,7 @@
 # https://open.mesosphere.com/advanced-course/installing-zookeeper/
 
 rpm -Uvh http://archive.cloudera.com/cdh4/one-click-install/redhat/6/x86_64/cloudera-cdh-4-0.x86_64.rpm
-yum update
+yum update -y
 yum -y install zookeeper zookeeper-server
 
 echo ""
@@ -27,14 +27,15 @@ echo "sudo chkconfig zookeeper-server on"
 
 # Appent to /etc/zookeeper/conf/log4j.properties
 : '
-log4j.rootLogger=${zookeeper.root.logger}, PAPERTRAIL
-
 log4j.appender.PAPERTRAIL=org.apache.log4j.net.SyslogAppender
 log4j.appender.PAPERTRAIL.Threshold=WARN
 log4j.appender.PAPERTRAIL.Facility=LOCAL7
 log4j.appender.PAPERTRAIL.FacilityPrinting=false
 log4j.appender.PAPERTRAIL.Header=true
-log4j.appender.PAPERTRAIL.SyslogHost=logs2.papertrailapp.com:52597
+log4j.appender.PAPERTRAIL.SyslogHost=logs2.papertrailapp.com:{YourIP}
 log4j.appender.PAPERTRAIL.layout=org.apache.log4j.PatternLayout
 log4j.appender.PAPERTRAIL.layout.ConversionPattern=%p: (%F:%L) %x %m %n
 '
+
+# Add PAPERTRAIL to ZOO_LOG4J_PROP in /usr/bin/zookeeper-server
+# sudo sed -i "s/ROLLINGFILE/&,PAPERTRAIL/" /usr/bin/zookeeper-server

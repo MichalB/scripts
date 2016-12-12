@@ -7,7 +7,7 @@ const client = new Client('zk01.eu-w1.aws.vpn:2181,zk02.eu-w1.aws.vpn:2181,zk03.
 const producer = new Producer(client, { partitionerType: 3 })
 
 producer.on('ready', function () {
-    client.refreshMetadata(['test-rep-one'], function () {
+    client.refreshMetadata(['test'], function () {
         async.timesLimit(1000000, 1000, function (n, next) {
             payload = {
                 topic: 'test',
@@ -26,3 +26,4 @@ producer.on('error', console.log)
 
 // 1.000.000 messages / 10 min per nodeJS producer on 1 CPU
 // Kafka on m4.large - 95% CPU / 10 nodeJS producers
+// Pada pri zmene leadera

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+sudo yum update -y
+sudo yum install git htop gcc-c++ -y
+git clone https://github.com/MichalB/scripts.git
+
+scripts/centos/change-hostname zk01
+
+scripts/centos/jdk-install
+scripts/centos/zookeeper-install
+
+sudo -u zookeeper zookeeper-server-initialize --myid=1
+service zookeeper-server start
+chkconfig zookeeper-server on
